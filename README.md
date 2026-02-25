@@ -1,30 +1,30 @@
-# SpectraQuest
+# Orbital Architect
 
-A gamified spectroscopy puzzle game. Identify molecules from their vibrational spectra through progressive challenges, peak detective work, and molecular building.
+A gamified quantum chemistry puzzle game. Build atoms by filling electron orbitals following real quantum mechanical rules — aufbau principle, Pauli exclusion, Hund's rule. Watch 3D orbitals materialize as you place electrons.
 
 ## Game Modes
 
-- **Mystery Mode** — Given an unknown spectrum, identify the molecule. Analyze peaks, match functional groups, eliminate candidates. Harder molecules unlock as you progress.
-- **Speed Round** — Rapid-fire peak identification. "Is this peak C=O, O-H, C-H, or N-H?" Beat the clock.
-- **Build Mode** — Given a target spectrum, construct the molecule by adding functional groups. Watch the predicted spectrum update live as you build.
-- **Campaign** — 30+ levels across 5 difficulty tiers, from simple alcohols to complex natural products.
+- **Campaign** — Build elements from hydrogen to krypton. Each level is a target element; fill orbitals correctly to complete it.
+- **Challenge Mode** — Timed rounds: build the electron configuration as fast as possible.
+- **Sandbox** — Free exploration. Place electrons anywhere, break rules, see what happens.
 
 ## Features
 
-- Real-time interactive spectrum viewer (zoom, pan, peak pick)
-- Functional group reference library with characteristic frequency ranges
-- Scoring: accuracy × speed × streak multiplier
-- Achievements and progression system
-- Annotated solutions after each round explaining peak assignments
-- Works entirely in the browser — no server needed
+- Interactive 3D orbital visualizations (s, p, d shapes)
+- Drag-and-drop electron placement
+- Real-time energy level diagram
+- Quantum number display (n, l, ml, ms) for each electron
+- Rule violation feedback with explanations
+- Scoring, streaks, and achievements
+- Periodic table integration
 
 ## Tech Stack
 
 - **Framework:** Next.js 15 + TypeScript
-- **Charts:** Recharts for interactive spectrum plots
+- **3D:** Three.js / React Three Fiber for orbital rendering
 - **Animation:** Framer Motion
 - **Styling:** Tailwind CSS 4
-- **State:** Zustand for game state management
+- **State:** Zustand
 
 ## Getting Started
 
