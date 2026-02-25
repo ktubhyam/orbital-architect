@@ -1,26 +1,30 @@
-# Spectral Playground
+# SpectraQuest
 
-Interactive browser-based spectrum preprocessing sandbox. Upload a spectrum, apply transformations in real time, and see the results instantly.
+A gamified spectroscopy puzzle game. Identify molecules from their vibrational spectra through progressive challenges, peak detective work, and molecular building.
+
+## Game Modes
+
+- **Mystery Mode** — Given an unknown spectrum, identify the molecule. Analyze peaks, match functional groups, eliminate candidates. Harder molecules unlock as you progress.
+- **Speed Round** — Rapid-fire peak identification. "Is this peak C=O, O-H, C-H, or N-H?" Beat the clock.
+- **Build Mode** — Given a target spectrum, construct the molecule by adding functional groups. Watch the predicted spectrum update live as you build.
+- **Campaign** — 30+ levels across 5 difficulty tiers, from simple alcohols to complex natural products.
 
 ## Features
 
-- **Drag-and-drop spectrum upload** (JCAMP-DX, CSV, SPC)
-- **Real-time preprocessing chain:**
-  - Baseline correction (ALS, SNIP, polynomial)
-  - Smoothing (Savitzky-Golay, Whittaker)
-  - Normalization (SNV, min-max, area, vector)
-  - Derivative (1st, 2nd order Savitzky-Golay)
-- **Visual diff** — before/after overlay with highlighting
-- **Pipeline builder** — drag and reorder preprocessing steps
-- **Export** — download processed spectrum as CSV or copy pipeline code (Python/SpectraKit)
-- **Preloaded examples** — benzaldehyde IR, ethanol Raman, aspirin UV-Vis
+- Real-time interactive spectrum viewer (zoom, pan, peak pick)
+- Functional group reference library with characteristic frequency ranges
+- Scoring: accuracy × speed × streak multiplier
+- Achievements and progression system
+- Annotated solutions after each round explaining peak assignments
+- Works entirely in the browser — no server needed
 
 ## Tech Stack
 
 - **Framework:** Next.js 15 + TypeScript
-- **Charts:** D3.js for interactive spectrum plots
-- **Processing:** Web Workers for non-blocking computation
+- **Charts:** Recharts for interactive spectrum plots
+- **Animation:** Framer Motion
 - **Styling:** Tailwind CSS 4
+- **State:** Zustand for game state management
 
 ## Getting Started
 
@@ -30,10 +34,6 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
-
-## How It Works
-
-All preprocessing runs client-side in Web Workers — no server needed. The pipeline builder generates equivalent Python code using SpectraKit, so you can reproduce results in your research workflow.
 
 ## License
 
