@@ -205,7 +205,7 @@ export default function Home() {
   const eloChange = eloRating.current - INITIAL_RATING;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background relative overflow-x-hidden">
       {/* Grid background */}
       <div className="absolute inset-0 grid-bg opacity-30" />
 
