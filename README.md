@@ -2,6 +2,8 @@
 
 A gamified quantum chemistry puzzle game where you build atoms by filling electron orbitals following real quantum mechanical rules.
 
+**[Play Online](https://orbital.tubhyam.dev)** | **[Project Page](https://tubhyam.dev/simulations/orbital-architect)**
+
 ## The Game
 
 You're given a target element (e.g., "Build Iron"). You see an energy level diagram and a 3D orbital viewer. Place electrons into orbital slots following three fundamental rules of quantum mechanics:
