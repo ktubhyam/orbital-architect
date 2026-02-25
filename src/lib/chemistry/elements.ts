@@ -104,14 +104,32 @@ export const ELEMENTS: Element[] = elementData.map((data, index) => {
   };
 });
 
+// Fallback element for out-of-range lookups (prevents render crashes)
+const FALLBACK_ELEMENT: Element = {
+  atomicNumber: 0,
+  symbol: '?',
+  name: 'Unknown',
+  electronConfig: '',
+  period: 0,
+  group: 0,
+  category: 'nonmetal',
+  isAufbauException: false,
+};
+
 export function getElement(atomicNumber: number): Element {
   const el = ELEMENTS[atomicNumber - 1];
-  if (!el) throw new Error(`Element with Z=${atomicNumber} not found`);
+  if (!el) {
+    console.warn(`[getElement] Element with Z=${atomicNumber} not found, using fallback`);
+    return FALLBACK_ELEMENT;
+  }
   return el;
 }
 
 export function getElementConfig(atomicNumber: number): SubshellOccupancy[] {
   const data = elementData[atomicNumber - 1];
-  if (!data) throw new Error(`Element with Z=${atomicNumber} not found`);
+  if (!data) {
+    console.warn(`[getElementConfig] Element with Z=${atomicNumber} not found`);
+    return [];
+  }
   return occ(data.config);
 }

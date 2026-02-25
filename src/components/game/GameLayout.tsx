@@ -22,7 +22,17 @@ import { TeachingTerminal } from './TeachingTerminal';
 import type { Spin } from '@/types/chemistry';
 
 const OrbitalViewer = dynamic(
-  () => import('@/components/three/OrbitalViewer').then(m => ({ default: m.OrbitalViewer })),
+  () => import('@/components/three/OrbitalViewer').then(m => ({ default: m.OrbitalViewer })).catch(() => ({
+    default: () => (
+      <div className="h-full bg-black border border-border flex items-center justify-center font-mono text-foreground/20 text-xs p-6 text-center">
+        <div>
+          <div className="text-error/60 text-2xl mb-2">⚠</div>
+          <div className="text-foreground/40 mb-1">3D viewer failed to load</div>
+          <div className="text-foreground/20 text-[10px]">Use the energy diagram to place electrons</div>
+        </div>
+      </div>
+    ),
+  })),
   {
     loading: () => <div className="h-full bg-black border border-border flex items-center justify-center font-mono text-foreground/20 text-xs">loading 3d viewer...</div>,
     ssr: false,
@@ -37,7 +47,17 @@ interface GameLayoutProps {
 export function GameLayout({ showReveal, onReveal }: GameLayoutProps = {}) {
   const selectedSpin = useGameStore(s => s.selectedSpin);
   const mode = useGameStore(s => s.mode);
+  const totalElectrons = useGameStore(s => s.totalElectrons);
   const placeWithAudio = usePlaceWithAudio();
+
+  // Guard: don't render game UI until a level is loaded
+  if (totalElectrons === 0) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background font-mono text-foreground/30 text-sm">
+        loading level...
+      </div>
+    );
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
