@@ -13,13 +13,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://orbital.tubhyam.dev";
+
 export const metadata: Metadata = {
-  title: "Orbital Architect — Quantum Chemistry Puzzle Game",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Orbital Architect — Quantum Chemistry Puzzle Game",
+    template: "%s — Orbital Architect",
+  },
   description: "Build atoms by filling electron orbitals following real quantum mechanical rules. Master the Aufbau Principle, Pauli Exclusion, and Hund's Rule.",
-  keywords: ["chemistry", "quantum mechanics", "electron configuration", "puzzle game", "education", "orbital"],
+  keywords: ["chemistry", "quantum mechanics", "electron configuration", "puzzle game", "education", "orbital", "aufbau", "periodic table"],
+  authors: [{ name: "Tubhyam Karthikeyan", url: "https://tubhyam.dev" }],
+  creator: "Tubhyam Karthikeyan",
   openGraph: {
     title: "Orbital Architect",
     description: "Build atoms by filling electron orbitals. A quantum chemistry puzzle game.",
+    url: SITE_URL,
     type: "website",
     siteName: "Orbital Architect",
   },
@@ -27,6 +36,13 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Orbital Architect",
     description: "Build atoms by filling electron orbitals. A quantum chemistry puzzle game.",
+    creator: "@ktubhyam",
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+  verification: {
+    google: "JBzFZzb7pTB2nJeaKAciQHIJ2KkFqbVDLVPLU8ZtlxY",
   },
 };
 
@@ -35,11 +51,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Orbital Architect",
+    description: "Build atoms by filling electron orbitals following real quantum mechanical rules.",
+    url: SITE_URL,
+    applicationCategory: "EducationApplication",
+    operatingSystem: "Web",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    author: {
+      "@type": "Person",
+      name: "Tubhyam Karthikeyan",
+      url: "https://tubhyam.dev",
+    },
+  };
+
   return (
     <html lang="en" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
