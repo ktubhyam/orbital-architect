@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
@@ -41,6 +42,9 @@ export function ElectronTray() {
   const selectedSpin = useGameStore(s => s.selectedSpin);
   const setSelectedSpin = useGameStore(s => s.setSelectedSpin);
 
+  const selectSpinUp = useCallback(() => setSelectedSpin('up'), [setSelectedSpin]);
+  const selectSpinDown = useCallback(() => setSelectedSpin('down'), [setSelectedSpin]);
+
   const remaining = totalElectrons - placedElectrons;
   const fillProgress = totalElectrons > 0 ? placedElectrons / totalElectrons : 0;
 
@@ -65,11 +69,11 @@ export function ElectronTray() {
         <div className="flex items-center gap-1">
           <span className="text-foreground/30 mr-1">spin:</span>
           <motion.button
-            onClick={() => setSelectedSpin('up')}
+            onClick={selectSpinUp}
             whileTap={{ scale: 0.9 }}
             aria-label="Select spin up"
             aria-pressed={selectedSpin === 'up'}
-            className={`w-8 h-8 flex items-center justify-center text-base font-bold transition-all border ${
+            className={`w-8 h-8 flex items-center justify-center text-base font-bold transition-all border focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/60 ${
               selectedSpin === 'up'
                 ? 'bg-accent/15 text-accent border-accent/60'
                 : 'bg-transparent text-foreground/30 border-border hover:border-foreground/20'
@@ -79,11 +83,11 @@ export function ElectronTray() {
             ↑
           </motion.button>
           <motion.button
-            onClick={() => setSelectedSpin('down')}
+            onClick={selectSpinDown}
             whileTap={{ scale: 0.9 }}
             aria-label="Select spin down"
             aria-pressed={selectedSpin === 'down'}
-            className={`w-8 h-8 flex items-center justify-center text-base font-bold transition-all border ${
+            className={`w-8 h-8 flex items-center justify-center text-base font-bold transition-all border focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/60 ${
               selectedSpin === 'down'
                 ? 'bg-accent/15 text-accent border-accent/60'
                 : 'bg-transparent text-foreground/30 border-border hover:border-foreground/20'

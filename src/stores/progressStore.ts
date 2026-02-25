@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import type { LevelProgress, LeaderboardEntry, EloRating, EloChange } from '@/types/game';
 import {
   getElementDifficulty,
@@ -44,7 +44,7 @@ const initialLevels: Record<number, LevelProgress> = {
 };
 
 export const useProgressStore = create<ProgressStore>()(
-  persist(
+  devtools(persist(
     (set, get) => ({
       campaignLevels: initialLevels,
       eloRating: { current: INITIAL_RATING, peak: INITIAL_RATING, history: [] },
@@ -234,5 +234,5 @@ export const useProgressStore = create<ProgressStore>()(
     {
       name: 'orbital-architect-progress',
     }
-  )
+  ), { name: 'ProgressStore' })
 );

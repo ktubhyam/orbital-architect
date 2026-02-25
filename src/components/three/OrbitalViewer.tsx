@@ -8,7 +8,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { useGameStore } from '@/stores/gameStore';
 import { SUBSHELL_COLORS, getSubshellType } from '@/lib/chemistry';
 import { getNextCorrectOrbital } from '@/lib/chemistry/validation';
-import { audio } from '@/lib/game/audio';
+import { usePlaceWithAudio } from '@/hooks/usePlaceWithAudio';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import type { OrbitalState } from '@/types/chemistry';
 
@@ -352,7 +352,7 @@ export function OrbitalViewer() {
   const phase = useGameStore(s => s.phase);
   const orbitals = useGameStore(s => s.orbitals);
   const selectedSpin = useGameStore(s => s.selectedSpin);
-  const placeElectron = useGameStore(s => s.placeElectron);
+  const placeWithAudio = usePlaceWithAudio();
 
   const nextOrbital = getNextCorrectOrbital(orbitals);
   const canReceiveDrop = phase === 'playing' && nextOrbital !== null;
@@ -378,26 +378,8 @@ export function OrbitalViewer() {
     }
 
     if (!canReceiveDrop || !nextOrbital) return;
-    const success = placeElectron(nextOrbital.orbitalId, selectedSpin);
-    if (success) {
-      const state = useGameStore.getState();
-      const orbital = state.orbitals.find(o => o.id === nextOrbital.orbitalId);
-      if (orbital) {
-        audio.playPlacement(orbital.n, orbital.l, orbital.ml);
-        audio.playStreak(state.streak);
-        if (state.isComplete) {
-          setTimeout(() => audio.playLevelComplete(), 200);
-        }
-      }
-    } else {
-      const state = useGameStore.getState();
-      if (state.lastViolation?.severity === 'error') {
-        audio.playError();
-      } else {
-        audio.playWarning();
-      }
-    }
-  }, [canReceiveDrop, nextOrbital, placeElectron, selectedSpin]);
+    placeWithAudio(nextOrbital.orbitalId, selectedSpin);
+  }, [canReceiveDrop, nextOrbital, placeWithAudio, selectedSpin]);
 
   return (
     <div
@@ -413,12 +395,10 @@ export function OrbitalViewer() {
           <Canvas
             camera={{ position: [0, 0, 5], fov: 50 }}
             dpr={[1, 1.5]}
-            frameloop="demand"
+            frameloop="always"
             gl={{ antialias: false, alpha: false, powerPreference: 'high-performance' }}
-            onCreated={({ gl, invalidate }) => {
+            onCreated={({ gl }) => {
               gl.setClearColor('#000000');
-              const loop = () => { invalidate(); requestAnimationFrame(loop); };
-              loop();
             }}
           >
             <Scene isDropHovering={isOver} />

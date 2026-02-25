@@ -14,12 +14,16 @@ class AudioManager {
   private volume: number = 0.3;
   private pendingTimers: ReturnType<typeof setTimeout>[] = [];
 
-  private getContext(): AudioContext {
+  private getContext(): AudioContext | null {
     if (!this.ctx) {
-      this.ctx = new AudioContext();
+      try {
+        this.ctx = new AudioContext();
+      } catch {
+        return null;
+      }
     }
     if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      this.ctx.resume().catch(() => {});
     }
     return this.ctx;
   }
@@ -45,6 +49,7 @@ class AudioManager {
   playPlacement(n: number, l: number, ml: number) {
     if (this.muted) return;
     const ctx = this.getContext();
+    if (!ctx) return;
 
     const baseFreq = SHELL_FREQUENCIES[n] ?? 440;
     const harmonicOffset = l * 40 + (ml + l) * 15;
@@ -70,6 +75,7 @@ class AudioManager {
   playError() {
     if (this.muted) return;
     const ctx = this.getContext();
+    if (!ctx) return;
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -91,6 +97,7 @@ class AudioManager {
   playWarning() {
     if (this.muted) return;
     const ctx = this.getContext();
+    if (!ctx) return;
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -123,6 +130,7 @@ class AudioManager {
     [1, 1.25, 1.5].forEach((ratio, i) => {
       const id = setTimeout(() => {
         const ctx = this.getContext();
+        if (!ctx) return;
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
@@ -150,6 +158,7 @@ class AudioManager {
     notes.forEach((freq, i) => {
       const id = setTimeout(() => {
         const ctx = this.getContext();
+        if (!ctx) return;
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
@@ -172,6 +181,7 @@ class AudioManager {
   playStreak(streak: number) {
     if (this.muted || streak < 3) return;
     const ctx = this.getContext();
+    if (!ctx) return;
 
     const freq = 400 + streak * 30;
     const osc = ctx.createOscillator();
@@ -193,6 +203,7 @@ class AudioManager {
   playUndo() {
     if (this.muted) return;
     const ctx = this.getContext();
+    if (!ctx) return;
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();

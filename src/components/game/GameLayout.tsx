@@ -2,8 +2,12 @@
 
 import { useCallback, useEffect } from 'react';
 import { DndContext, DragEndEvent, useSensor, useSensors, PointerSensor, TouchSensor } from '@dnd-kit/core';
+import dynamic from 'next/dynamic';
 import { useGameStore } from '@/stores/gameStore';
 import { getNextCorrectOrbital } from '@/lib/chemistry/validation';
+import { usePlaceWithAudio } from '@/hooks/usePlaceWithAudio';
+import { audio } from '@/lib/game/audio';
+import { BorderBeam, ScanLine } from '@/components/ui/TerminalEffects';
 import { EnergyDiagram } from './EnergyDiagram';
 import { ElectronTray } from './ElectronTray';
 import { ElectronConfig } from './ElectronConfig';
@@ -15,10 +19,15 @@ import { QuantumInfo } from './QuantumInfo';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
 import { StreakFlame } from './StreakFlame';
 import { TeachingTerminal } from './TeachingTerminal';
-import { OrbitalViewer } from '@/components/three/OrbitalViewer';
-import { BorderBeam, ScanLine } from '@/components/ui/TerminalEffects';
-import { audio } from '@/lib/game/audio';
 import type { Spin } from '@/types/chemistry';
+
+const OrbitalViewer = dynamic(
+  () => import('@/components/three/OrbitalViewer').then(m => ({ default: m.OrbitalViewer })),
+  {
+    loading: () => <div className="h-full bg-black border border-border flex items-center justify-center font-mono text-foreground/20 text-xs">loading 3d viewer...</div>,
+    ssr: false,
+  }
+);
 
 interface GameLayoutProps {
   showReveal?: boolean;
@@ -26,9 +35,9 @@ interface GameLayoutProps {
 }
 
 export function GameLayout({ showReveal, onReveal }: GameLayoutProps = {}) {
-  const placeElectron = useGameStore(s => s.placeElectron);
   const selectedSpin = useGameStore(s => s.selectedSpin);
   const mode = useGameStore(s => s.mode);
+  const placeWithAudio = usePlaceWithAudio();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -55,26 +64,8 @@ export function GameLayout({ showReveal, onReveal }: GameLayoutProps = {}) {
       orbitalId = over.id as string;
     }
 
-    const success = placeElectron(orbitalId, spin);
-    if (success) {
-      const store = useGameStore.getState();
-      const orbital = store.orbitals.find(o => o.id === orbitalId);
-      if (orbital) {
-        audio.playPlacement(orbital.n, orbital.l, orbital.ml);
-        audio.playStreak(store.streak);
-        if (store.isComplete) {
-          setTimeout(() => audio.playLevelComplete(), 200);
-        }
-      }
-    } else {
-      const store = useGameStore.getState();
-      if (store.lastViolation?.severity === 'error') {
-        audio.playError();
-      } else {
-        audio.playWarning();
-      }
-    }
-  }, [placeElectron, selectedSpin]);
+    placeWithAudio(orbitalId, spin);
+  }, [placeWithAudio, selectedSpin]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {

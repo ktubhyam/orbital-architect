@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import confetti from 'canvas-confetti';
 import { useGameStore, calculateStars } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { getElement } from '@/lib/chemistry';
 import { ELEMENT_FACTS } from '@/lib/education';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { useRouter } from 'next/navigation';
 
 export function LevelComplete() {
@@ -27,6 +27,7 @@ export function LevelComplete() {
   const hasRecorded = useRef(false);
   const eloChangeRef = useRef(0);
   const primaryButtonRef = useRef<HTMLButtonElement>(null);
+  const focusTrapRef = useFocusTrap<HTMLDivElement>(isComplete);
 
   const element = getElement(currentElement);
   const stars = calculateStars(mistakes, hintsUsed);
@@ -43,22 +44,27 @@ export function LevelComplete() {
         eloChangeRef.current = change;
       }
 
-      // Fire confetti
-      const duration = stars === 3 ? 3000 : stars === 2 ? 2000 : 1000;
-      const end = Date.now() + duration;
+      // Fire confetti (dynamically imported to reduce initial bundle)
+      import('canvas-confetti').then((mod) => {
+        const confetti = mod.default;
+        const duration = stars === 3 ? 3000 : stars === 2 ? 2000 : 1000;
+        const end = Date.now() + duration;
 
-      const frame = () => {
-        confetti({
-          particleCount: stars === 3 ? 5 : 2,
-          angle: 60 + Math.random() * 60,
-          spread: 60,
-          origin: { x: Math.random(), y: Math.random() * 0.4 },
-          colors: ['#C9A04A', '#4A90D9', '#E8913A', '#22C55E', '#D4B15E'],
-          disableForReducedMotion: true,
-        });
-        if (Date.now() < end) requestAnimationFrame(frame);
-      };
-      frame();
+        const frame = () => {
+          confetti({
+            particleCount: stars === 3 ? 5 : 2,
+            angle: 60 + Math.random() * 60,
+            spread: 60,
+            origin: { x: Math.random(), y: Math.random() * 0.4 },
+            colors: ['#C9A04A', '#4A90D9', '#E8913A', '#22C55E', '#D4B15E'],
+            disableForReducedMotion: true,
+          });
+          if (Date.now() < end) requestAnimationFrame(frame);
+        };
+        frame();
+      }).catch(() => {
+        // Confetti import failed — non-critical, skip silently
+      });
     }
   }, [isComplete, currentElement, score, stars, mistakes, hintsUsed, timeSeconds, maxStreak, mode, completeCampaignLevel]);
 
@@ -89,6 +95,7 @@ export function LevelComplete() {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
     >
       <motion.div
+        ref={focusTrapRef}
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 25, delay: 0.1 }}
@@ -96,6 +103,7 @@ export function LevelComplete() {
         role="dialog"
         aria-modal="true"
         aria-label={`Level complete: ${element.name}`}
+        aria-describedby="level-complete-stats"
       >
         <div className="term-header">
           level complete
@@ -159,7 +167,7 @@ export function LevelComplete() {
           </div>
 
           {/* Stats grid — terminal output style */}
-          <div className="text-left text-xs space-y-1 border border-border p-3 mb-5 bg-black/30">
+          <div id="level-complete-stats" className="text-left text-xs space-y-1 border border-border p-3 mb-5 bg-black/30">
             <div className="flex justify-between">
               <span className="text-foreground/40">rating_change</span>
               <span className={`font-bold ${eloChange >= 0 ? 'text-success' : 'text-error'}`}>
@@ -203,7 +211,7 @@ export function LevelComplete() {
                 setPhase('level-select');
                 router.push('/campaign');
               }}
-              className="flex-1 py-2 border border-border text-foreground/50 hover:bg-surface-2 hover:text-foreground/70 transition-all"
+              className="flex-1 py-2 border border-border text-foreground/50 hover:bg-surface-2 hover:text-foreground/70 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/60"
             >
               [levels]
             </button>
@@ -212,7 +220,7 @@ export function LevelComplete() {
               <button
                 ref={primaryButtonRef}
                 onClick={() => startLevel(currentElement + 1)}
-                className="flex-1 py-2 border border-accent/50 bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-all"
+                className="flex-1 py-2 border border-accent/50 bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
               >
                 [next →]
               </button>
@@ -220,7 +228,7 @@ export function LevelComplete() {
               <button
                 ref={primaryButtonRef}
                 onClick={() => startLevel(currentElement)}
-                className="flex-1 py-2 border border-accent/50 bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-all"
+                className="flex-1 py-2 border border-accent/50 bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
               >
                 [replay]
               </button>

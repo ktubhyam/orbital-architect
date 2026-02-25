@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import type { Spin, OrbitalState } from '@/types/chemistry';
 import type { GameMode, GamePhase, RuleViolation, PlacementAction } from '@/types/game';
 import { createOrbitalStates, validatePlacement, getNextCorrectOrbital, getElement } from '@/lib/chemistry';
@@ -40,7 +41,7 @@ interface GameStore {
   getStreakMultiplier: () => number;
 }
 
-export const useGameStore = create<GameStore>((set, get) => ({
+export const useGameStore = create<GameStore>()(devtools((set, get) => ({
   mode: 'campaign',
   phase: 'menu',
   currentElement: 1,
@@ -221,7 +222,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   getStreakMultiplier: () => {
     return getStreakMultiplier(get().streak);
   },
-}));
+}), { name: 'GameStore' }));
 
 function getStreakMultiplier(streak: number): number {
   if (streak >= 15) return 3.0;

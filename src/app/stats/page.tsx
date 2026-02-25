@@ -3,8 +3,9 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useProgressStore } from '@/stores/progressStore';
+import { useEducationStore } from '@/stores/educationStore';
 import { INITIAL_RATING } from '@/lib/game/elo';
-import { ELEMENTS } from '@/lib/chemistry';
+import { EDUCATION_CONTENT } from '@/lib/education';
 import { StatusIndicator } from '@/components/ui/TerminalEffects';
 
 function EloSparkline({ history }: { history: Array<{ newRating: number }> }) {
@@ -104,6 +105,7 @@ export default function StatsPage() {
   const achievements = useProgressStore(s => s.achievements);
   const totalScore = useProgressStore(s => s.totalScore);
   const challengeLeaderboard = useProgressStore(s => s.challengeLeaderboard);
+  const seenContentIds = useEducationStore(s => s.seenContentIds);
 
   // Compute stats
   const completedLevels = Object.values(campaignLevels).filter(l => l.completed).length;
@@ -111,6 +113,8 @@ export default function StatsPage() {
   const perfectLevels = Object.values(campaignLevels).filter(l => l.bestStars === 3).length;
   const totalAttempts = Object.values(campaignLevels).reduce((sum, l) => sum + (l.attempts ?? 0), 0);
   const bestChallengeStreak = challengeLeaderboard.reduce((max, e) => Math.max(max, e.streak), 0);
+  const conceptsLearned = seenContentIds.length;
+  const totalConcepts = EDUCATION_CONTENT.filter(e => e.showOnce).length;
 
   const allAchievementIds = [
     'perfect_config', 'no_mistakes', 'all_36',
@@ -188,6 +192,7 @@ export default function StatsPage() {
             { label: 'best_challenge', value: String(bestChallengeStreak), color: 'var(--warning)' },
             { label: 'achievements', value: `${achievements.length}/${allAchievementIds.length}`, color: 'var(--cyan)' },
             { label: 'elo_peak', value: String(eloRating.peak), color: 'var(--accent)' },
+            { label: 'concepts', value: `${conceptsLearned}/${totalConcepts}`, color: 'var(--success)' },
           ].map((stat) => (
             <div key={stat.label} className="term-panel p-3 text-center font-mono">
               <div className="text-[10px] text-foreground/30 uppercase tracking-wider">{stat.label}</div>

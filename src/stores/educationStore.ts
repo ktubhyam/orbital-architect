@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import type { EducationalEntry, ContentCategory } from '@/lib/education';
 
 export interface TerminalLogEntry {
@@ -28,12 +28,14 @@ interface EducationActions {
   clearTerminalLog: () => void;
   toggleMinimized: () => void;
   getSeenSet: () => Set<string>;
+  getSeenCount: () => number;
+  getUniqueCategories: () => ContentCategory[];
 }
 
 type EducationStore = EducationState & EducationActions;
 
 export const useEducationStore = create<EducationStore>()(
-  persist(
+  devtools(persist(
     (set, get) => ({
       seenContentIds: [],
       contentMinimized: false,
@@ -84,6 +86,18 @@ export const useEducationStore = create<EducationStore>()(
       getSeenSet: () => {
         return new Set(get().seenContentIds);
       },
+
+      getSeenCount: () => {
+        return get().seenContentIds.length;
+      },
+
+      getUniqueCategories: () => {
+        const categories = new Set<ContentCategory>();
+        for (const entry of get().terminalLog) {
+          categories.add(entry.category);
+        }
+        return Array.from(categories);
+      },
     }),
     {
       name: 'orbital-architect-education',
@@ -92,5 +106,5 @@ export const useEducationStore = create<EducationStore>()(
         contentMinimized: state.contentMinimized,
       }),
     }
-  )
+  ), { name: 'EducationStore' })
 );

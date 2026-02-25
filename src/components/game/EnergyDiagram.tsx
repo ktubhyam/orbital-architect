@@ -4,14 +4,15 @@ import { useMemo, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { createSubshellGroups, SUBSHELL_COLORS } from '@/lib/chemistry';
-import { audio } from '@/lib/game/audio';
-import type { OrbitalState, SubshellType } from '@/types/chemistry';
+import { usePlaceWithAudio } from '@/hooks/usePlaceWithAudio';
+import type { OrbitalState, SubshellType, Spin } from '@/types/chemistry';
 
-const OrbitalSlot = memo(function OrbitalSlot({ orbital, subshellType }: { orbital: OrbitalState; subshellType: SubshellType }) {
+type PlaceWithAudioFn = (orbitalId: string, spin: Spin) => boolean;
+
+const OrbitalSlot = memo(function OrbitalSlot({ orbital, subshellType, placeWithAudio }: { orbital: OrbitalState; subshellType: SubshellType; placeWithAudio: PlaceWithAudioFn }) {
   const highlightedOrbitalId = useGameStore(s => s.highlightedOrbitalId);
   const setHighlightedOrbital = useGameStore(s => s.setHighlightedOrbital);
   const selectedSpin = useGameStore(s => s.selectedSpin);
-  const placeElectron = useGameStore(s => s.placeElectron);
   const phase = useGameStore(s => s.phase);
   const color = SUBSHELL_COLORS[subshellType];
   const isHighlighted = highlightedOrbitalId === orbital.id;
@@ -20,28 +21,8 @@ const OrbitalSlot = memo(function OrbitalSlot({ orbital, subshellType }: { orbit
 
   const handleClick = useCallback(() => {
     if (phase !== 'playing' || isFull) return;
-    const success = placeElectron(orbital.id, selectedSpin);
-    if (success) {
-      audio.playPlacement(orbital.n, orbital.l, orbital.ml);
-      const store = useGameStore.getState();
-      const siblings = store.orbitals.filter(o => o.n === orbital.n && o.l === orbital.l);
-      const subshellFull = siblings.every(o => o.electrons.length >= 2);
-      if (subshellFull) {
-        audio.playSubshellComplete(orbital.n);
-      }
-      audio.playStreak(store.streak);
-      if (store.isComplete) {
-        setTimeout(() => audio.playLevelComplete(), 200);
-      }
-    } else {
-      const store = useGameStore.getState();
-      if (store.lastViolation?.severity === 'error') {
-        audio.playError();
-      } else {
-        audio.playWarning();
-      }
-    }
-  }, [phase, isFull, orbital.id, orbital.n, orbital.l, orbital.ml, selectedSpin, placeElectron]);
+    placeWithAudio(orbital.id, selectedSpin);
+  }, [phase, isFull, orbital.id, selectedSpin, placeWithAudio]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -109,8 +90,9 @@ const OrbitalSlot = memo(function OrbitalSlot({ orbital, subshellType }: { orbit
 export function EnergyDiagram() {
   const currentElement = useGameStore(s => s.currentElement);
   const orbitals = useGameStore(s => s.orbitals);
+  const placeWithAudio = usePlaceWithAudio();
 
-  const groups = createSubshellGroups(currentElement);
+  const groups = useMemo(() => createSubshellGroups(currentElement), [currentElement]);
 
   const mergedGroups = useMemo(() => groups.map(group => ({
     ...group,
@@ -189,6 +171,7 @@ export function EnergyDiagram() {
                       key={orbital.id}
                       orbital={orbital}
                       subshellType={group.type}
+                      placeWithAudio={placeWithAudio}
                     />
                   ))}
                 </div>

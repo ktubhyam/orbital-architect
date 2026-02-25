@@ -53,6 +53,7 @@ export function GameHUD() {
     const nowMuted = audio.toggleMuted();
     setIsMuted(nowMuted);
   }, []);
+  const handleHint = useCallback(() => useHint(), [useHint]);
 
   const element = getElement(currentElement);
   const previewStars = calculateStars(mistakes, hintsUsed);
@@ -175,7 +176,7 @@ export function GameHUD() {
             onClick={toggleSound}
             aria-label={isMuted ? 'Unmute sound effects' : 'Mute sound effects'}
             aria-pressed={!isMuted}
-            className={`px-2 py-1 text-[11px] border transition-all ${
+            className={`px-2 py-1 text-[11px] border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/60 ${
               isMuted
                 ? 'border-foreground/20 text-foreground/30 hover:text-foreground/50'
                 : 'border-cyan-dim/40 text-cyan-dim hover:bg-cyan/10'
@@ -185,9 +186,9 @@ export function GameHUD() {
             {isMuted ? '[muted]' : '[sound]'}
           </button>
           <button
-            onClick={() => useHint()}
+            onClick={handleHint}
             aria-label="Show hint for next correct placement"
-            className="px-2 py-1 text-[11px] border border-cyan-dim/40 text-cyan-dim hover:bg-cyan/10 hover:text-cyan transition-all"
+            className="px-2 py-1 text-[11px] border border-cyan-dim/40 text-cyan-dim hover:bg-cyan/10 hover:text-cyan transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/60"
             title="Show hint (affects rating)"
           >
             [hint]
@@ -196,7 +197,7 @@ export function GameHUD() {
             onClick={undoLastPlacement}
             disabled={history.length === 0}
             aria-label="Undo last electron placement"
-            className="px-2 py-1 text-[11px] border border-border text-foreground/40 hover:bg-surface-2 hover:text-foreground/60 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+            className="px-2 py-1 text-[11px] border border-border text-foreground/40 hover:bg-surface-2 hover:text-foreground/60 transition-all disabled:opacity-20 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/60"
             title="Undo last placement"
           >
             [undo]
@@ -204,7 +205,7 @@ export function GameHUD() {
           <button
             onClick={resetLevel}
             aria-label="Reset current level"
-            className="px-2 py-1 text-[11px] border border-error/30 text-error/70 hover:bg-error/10 hover:text-error transition-all"
+            className="px-2 py-1 text-[11px] border border-error/30 text-error/70 hover:bg-error/10 hover:text-error transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/60"
             title="Reset level"
           >
             [reset]

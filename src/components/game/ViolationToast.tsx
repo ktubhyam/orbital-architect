@@ -53,7 +53,11 @@ export function ViolationToast({ showReveal, onReveal }: ViolationToastProps) {
                 ? 'var(--error)' : 'var(--warning)',
             }}
           >
-            {lastViolation.severity === 'error' ? 'ERROR' : 'WARNING'}
+            {lastViolation.severity === 'error' ? (
+              <><span aria-hidden="true">✕ </span>ERROR</>
+            ) : (
+              <><span aria-hidden="true">⚡ </span>WARNING</>
+            )}
           </div>
           <div className="px-4 py-3">
             <div className={`text-sm font-bold ${
@@ -73,7 +77,7 @@ export function ViolationToast({ showReveal, onReveal }: ViolationToastProps) {
                   e.stopPropagation();
                   onReveal();
                 }}
-                className="mt-2 w-full py-1.5 border border-cyan/30 text-cyan text-[11px] hover:bg-cyan/10 transition-all font-mono"
+                className="mt-2 w-full py-1.5 border border-cyan/30 text-cyan text-[11px] hover:bg-cyan/10 transition-all font-mono focus-visible:ring-2 focus-visible:ring-cyan/60"
               >
                 [reveal answer] (-3s penalty)
               </motion.button>

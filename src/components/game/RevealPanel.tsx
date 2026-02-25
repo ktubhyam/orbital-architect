@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import type { OrbitalState, Spin } from '@/types/chemistry';
 
 interface RevealPanelProps {
@@ -18,6 +19,7 @@ export function RevealPanel({
   onContinue,
 }: RevealPanelProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const focusTrapRef = useFocusTrap<HTMLDivElement>(true);
 
   useEffect(() => {
     buttonRef.current?.focus();
@@ -35,6 +37,7 @@ export function RevealPanel({
       aria-describedby="reveal-explanation"
     >
       <motion.div
+        ref={focusTrapRef}
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 20 }}
