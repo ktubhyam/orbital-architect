@@ -27,23 +27,19 @@ export function LevelBriefing({ atomicNumber, onDismiss }: LevelBriefingProps) {
 
   // Type out lines one by one
   useEffect(() => {
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < allLines.length) {
-        setLines(prev => [...prev, allLines[i]]);
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 400);
+    setLines([]);
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    allLines.forEach((line, i) => {
+      timers.push(setTimeout(() => {
+        setLines(prev => [...prev, line]);
+      }, (i + 1) * 400));
+    });
 
     // Auto-dismiss after all lines typed + 1.5s pause
-    const timeout = setTimeout(() => onDismissRef.current(), allLines.length * 400 + 1500);
+    timers.push(setTimeout(() => onDismissRef.current(), allLines.length * 400 + 1500));
 
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
+    return () => timers.forEach(t => clearTimeout(t));
   }, [allLines]);
 
   return (
@@ -75,7 +71,7 @@ export function LevelBriefing({ atomicNumber, onDismiss }: LevelBriefingProps) {
         </div>
 
         <div className="p-4 font-mono text-[12px] space-y-1.5 min-h-[100px]">
-          {lines.map((line, i) => (
+          {lines.map((line, i) => line ? (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: -4 }}
@@ -89,7 +85,7 @@ export function LevelBriefing({ atomicNumber, onDismiss }: LevelBriefingProps) {
             >
               {line}
             </motion.div>
-          ))}
+          ) : null)}
           {lines.length < allLines.length && (
             <span className="inline-block w-2 h-4 bg-cyan/50 animate-pulse" />
           )}
