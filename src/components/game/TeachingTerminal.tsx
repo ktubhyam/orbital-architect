@@ -57,7 +57,7 @@ export function TeachingTerminal() {
   }, [terminalLog.length]);
 
   return (
-    <div className="term-panel flex flex-col max-h-[35%] min-h-[80px]">
+    <div className="term-panel flex flex-col min-h-[80px]">
       <div className="term-header flex items-center">
         <span className="flex-1">teaching log</span>
         <button
@@ -79,7 +79,7 @@ export function TeachingTerminal() {
             <div
               ref={scrollRef}
               className="overflow-y-auto p-2 space-y-2 font-mono text-[11px]"
-              style={{ maxHeight: '180px' }}
+              style={{ maxHeight: '250px' }}
             >
               {terminalLog.length === 0 ? (
                 <div className="text-foreground/15 py-2">

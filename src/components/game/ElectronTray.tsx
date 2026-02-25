@@ -52,8 +52,11 @@ export function ElectronTray() {
     <div className="term-panel">
       <div className="term-header">
         electron supply
-        <span className="ml-auto text-foreground/20 normal-case tracking-normal">
+        <span className="ml-auto text-foreground/20 normal-case tracking-normal hidden sm:inline">
           drag into atom or click orbital
+        </span>
+        <span className="ml-auto text-foreground/20 normal-case tracking-normal sm:hidden">
+          tap atom or orbital
         </span>
       </div>
 
@@ -100,23 +103,31 @@ export function ElectronTray() {
 
         <div className="h-6 w-px bg-border" />
 
-        {/* Electron supply */}
+        {/* Electron supply — draggable on desktop, tap hint on mobile */}
         <div className="flex items-center gap-1.5 flex-1 overflow-x-auto py-1">
           {remaining > 0 ? (
             <>
-              {Array.from({ length: Math.min(remaining, 8) }).map((_, i) => (
-                <DraggableElectron
-                  key={`e-${i}-${selectedSpin}`}
-                  id={`electron-${i}`}
-                  spin={selectedSpin}
-                  index={i}
-                />
-              ))}
-              {remaining > 8 && (
-                <span className="text-foreground/30 ml-1">
-                  +{remaining - 8}
-                </span>
-              )}
+              {/* Draggable electrons — hidden on small screens */}
+              <div className="hidden sm:flex items-center gap-1.5">
+                {Array.from({ length: Math.min(remaining, 8) }).map((_, i) => (
+                  <DraggableElectron
+                    key={`e-${i}-${selectedSpin}`}
+                    id={`electron-${i}`}
+                    spin={selectedSpin}
+                    index={i}
+                  />
+                ))}
+                {remaining > 8 && (
+                  <span className="text-foreground/30 ml-1">
+                    +{remaining - 8}
+                  </span>
+                )}
+              </div>
+              {/* Mobile: compact remaining count + tap hint */}
+              <div className="flex sm:hidden items-center gap-2 text-foreground/40">
+                <span className="text-accent font-bold text-lg">{remaining}</span>
+                <span className="text-[10px]">remaining — tap atom or orbital slot</span>
+              </div>
             </>
           ) : (
             <motion.span
