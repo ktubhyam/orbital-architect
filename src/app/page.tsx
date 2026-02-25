@@ -484,7 +484,7 @@ export default function Home() {
         >
           <span>elements 1–36</span>
           <span className="text-cyan-dim">H → Kr</span>
-          <span>quantum chemistry puzzle</span>
+          <a href="https://tubhyam.dev" target="_blank" rel="noopener noreferrer" className="hover:text-foreground/40 transition-colors">tubhyam.dev</a>
         </motion.div>
       </div>
     </div>
