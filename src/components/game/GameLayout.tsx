@@ -126,10 +126,13 @@ export function GameLayout({ showReveal, onReveal }: GameLayoutProps = {}) {
             </div>
           </div>
 
-          {/* Sidebar: Energy Diagram + Periodic Strip + Quantum Info */}
+          {/* Sidebar: Energy Diagram + Electron Tray + Teaching + Periodic */}
           <div className="flex-1 flex flex-col gap-2 min-h-0">
             <div className="flex-1 overflow-hidden min-h-[200px]">
               <EnergyDiagram />
+            </div>
+            <div className="shrink-0">
+              <ElectronTray />
             </div>
             {mode === 'campaign' && (
               <div className="shrink-0">
@@ -143,11 +146,6 @@ export function GameLayout({ showReveal, onReveal }: GameLayoutProps = {}) {
               <QuantumInfo />
             </div>
           </div>
-        </div>
-
-        {/* Bottom: Electron Tray */}
-        <div className="shrink-0 p-2 pt-0">
-          <ElectronTray />
         </div>
       </div>
 
