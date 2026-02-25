@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { modalBackdrop, modalPanel } from '@/lib/motion';
 import { useGameStore, calculateStars } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { getElement } from '@/lib/chemistry';
@@ -83,22 +84,25 @@ export function LevelComplete() {
     }
   }, [isComplete]);
 
-  if (!isComplete) return null;
-
   const hasNext = currentElement < 36;
   const eloChange = eloChangeRef.current;
 
   return (
+    <AnimatePresence>
+      {isComplete && (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      variants={modalBackdrop}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
     >
       <motion.div
         ref={focusTrapRef}
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25, delay: 0.1 }}
+        variants={modalPanel}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
         className="term-panel max-w-md w-full mx-4 shine-border"
         role="dialog"
         aria-modal="true"
@@ -237,5 +241,7 @@ export function LevelComplete() {
         </div>
       </motion.div>
     </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

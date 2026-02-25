@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { modalPanel } from '@/lib/motion';
 import { useGameStore } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { GameLayout } from '@/components/game/GameLayout';
@@ -21,8 +22,9 @@ function ChallengeMenu({ onStart }: { onStart: () => void }) {
       <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        variants={modalPanel}
+        initial="hidden"
+        animate="visible"
         className="term-panel max-w-md w-full relative z-10"
       >
         <div className="term-header">
@@ -43,7 +45,7 @@ function ChallengeMenu({ onStart }: { onStart: () => void }) {
 
           <button
             onClick={onStart}
-            className="w-full py-3 border border-accent/50 bg-accent/10 text-accent font-bold text-lg hover:bg-accent/20 transition-all mb-3"
+            className="w-full py-3 border border-accent/50 bg-accent/10 text-accent font-bold text-lg hover:bg-accent/20 transition-all mb-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
           >
             [start challenge]
           </button>
@@ -83,7 +85,7 @@ function ChallengeTimer({ timeLeft, totalTime }: { timeLeft: number; totalTime: 
           isLow ? 'text-error' : 'text-warning'
         }`}
         animate={isLow ? { scale: [1, 1.03, 1] } : {}}
-        transition={{ repeat: Infinity, duration: 0.5 }}
+        transition={{ repeat: Infinity, duration: 0.8 }}
       >
         {Math.ceil(timeLeft)}s
       </motion.div>
@@ -234,8 +236,9 @@ export default function ChallengePage() {
         <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
 
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          variants={modalPanel}
+          initial="hidden"
+          animate="visible"
           className="term-panel max-w-md w-full relative z-10 shine-border"
         >
           <div className="term-header">
@@ -264,7 +267,7 @@ export default function ChallengePage() {
             <div className="flex gap-2 text-sm">
               <button
                 onClick={handleStart}
-                className="flex-1 py-2.5 border border-accent/50 bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-all"
+                className="flex-1 py-2.5 border border-accent/50 bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
               >
                 [retry]
               </button>

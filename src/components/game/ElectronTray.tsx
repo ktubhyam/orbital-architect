@@ -122,6 +122,7 @@ export function ElectronTray() {
             <motion.span
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
               className="text-success/80"
               style={{ textShadow: '0 0 8px var(--success)' }}
             >

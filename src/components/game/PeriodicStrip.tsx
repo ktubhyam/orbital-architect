@@ -49,7 +49,7 @@ export function PeriodicStrip() {
               animate={isCurrent && isComplete ? {
                 borderColor: ['var(--accent)', 'var(--success)', 'var(--accent)'],
               } : {}}
-              transition={{ duration: 1, repeat: Infinity }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
               style={{ minWidth: 40 }}
             >
               <div className="text-[7px] text-foreground/25">{z}</div>

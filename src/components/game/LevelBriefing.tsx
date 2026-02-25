@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { modalPanel } from '@/lib/motion';
 import { getElement } from '@/lib/chemistry';
 import { ELEMENT_FACTS } from '@/lib/education';
 
@@ -62,8 +63,10 @@ export function LevelBriefing({ atomicNumber, onDismiss }: LevelBriefingProps) {
       aria-label="Level briefing"
     >
       <motion.div
-        initial={{ scale: 0.95, y: 10 }}
-        animate={{ scale: 1, y: 0 }}
+        variants={modalPanel}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
         className="term-panel max-w-lg w-full mx-4"
         onClick={(e) => e.stopPropagation()}
       >
